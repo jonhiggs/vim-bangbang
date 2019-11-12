@@ -55,17 +55,36 @@ function! BangBangInside()
   let l:nextP = getcurpos()
 
   call cursor(l:starting_position[1], l:starting_position[2])
+  call search(s:bangbangPrefix, 'Wbz')
+  let l:prevP = getcurpos()
+
+  call cursor(l:starting_position[1], l:starting_position[2])
+  call search(s:bangbangSuffix, 'Wbz')
+  let l:prevS = getcurpos()
+
+  call cursor(l:starting_position[1], l:starting_position[2])
 
   if l:starting_position == l:nextS
-    " there is no suffix after the cursor
+    echom "no suffix after cursor" . l:prevP[1] . ':' . l:prevP[2] . " " . l:nextS[1] . ':' . l:nextS[2]
     return 1
   endif
 
-  if l:nextP[1] < l:nextS[1] && l:nextP[2] < l:nextS[2]
-    " a prefix is coming before the next suffix
+  if l:starting_position == l:prevP
+    echom "no prefix before cursor" . l:prevP[1] . ':' . l:prevP[2] . " " . l:nextS[1] . ':' . l:nextS[2]
     return 1
   endif
 
+  if l:prevS[1] > l:prevP[1] && l:prevS[2] > l:prevP[2] && l:prevS != l:starting_position
+    echom "previous suffix comes after previous prefix" . l:prevS[1] . ':' . l:prevS[2] . " " . l:prevP[1] . ':' . l:prevP[2]
+    return 1
+  endif
+
+  if l:nextP[1] > l:nextS[1] && l:nextP[2] > l:nextS[2]
+    echom "next prefix comes before next suffix" . l:prevP[1] . ':' . l:prevP[2] . " " . l:nextS[1] . ':' . l:nextS[2]
+    return 1
+  endif
+
+  echom "inside" . l:prevP[1] . ':' . l:prevP[2] . " " . l:nextS[1] . ':' . l:nextS[2]
   return 0
 endfunction
 
@@ -88,8 +107,15 @@ function! BangBangDelete()
   execute 'normal ll'
 endfunction
 
-map  !!    :call BangBangWord()<CR>
+function! BangBangRange()
+  let l:start = getpos("'<")
+  let l:end = getpos("'>")
+  call s:BangBangWriteOut(l:start, l:end)
+endfunction
+
+map  !!    :call BangBangRange()<CR>
 map  !ap   :call BangBangParagraph()<CR>
 map  !d    :call BangBangDelete()<CR>
 map  !n    :call BangBangNext()<CR>
 map  !p    :call BangBangPrevious()<CR>
+map  !i    :call BangBangInside()<CR>
