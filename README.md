@@ -7,10 +7,17 @@ This is useful when editing your prose.
 
 ## Usage
 
-1. Highlight selected text. `!!`
 
-2. Highlight paragraph `!!ap`
+2. Highlight paragraph `!ap`
 
-3. Highlight sentence `!!as`
+3. Delete highlight. `!d`
 
-4. Highlight 3 words. `!!2aw`
+4. Next highlight. `!n`
+
+5. Previous highlight. `!p`
+
+
+the start the stuff goes in here the end
+
+
+
