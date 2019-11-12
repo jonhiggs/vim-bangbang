@@ -16,8 +16,4 @@ This is useful when editing your prose.
 
 5. Previous highlight. `!p`
 
-
-the start the stuff goes in here the end
-
-
-
+The start the stuff goes in here the end and another.

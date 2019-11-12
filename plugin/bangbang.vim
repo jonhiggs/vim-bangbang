@@ -2,10 +2,10 @@ let s:bangbangPrefix = "!!"
 let s:bangbangSuffix = "¡¡"
 
 function! s:BangBangWriteOut(start,end)
-  call cursor(a:end[0],a:end[1])
+  call cursor(a:end[1],a:end[2])
   execute 'normal a' . s:bangbangSuffix
 
-  call cursor(a:start[0],a:start[1])
+  call cursor(a:start[1],a:start[2])
   execute 'normal i' . s:bangbangPrefix
 endfunction
 
@@ -17,24 +17,33 @@ function! BangBangPrevious()
   call search(s:bangbangPrefix . s:bangbangPrefix, 'b')
 endfunction
 
-function! BangBangRange()
-  let l:start = getpos("'<")[1:2]
-  let l:end = getpos("'<")[1:2]
-  call s:BangBangWriteOut(l:start, l:end)
-endfunction
-
 function! BangBangParagraph()
   let l:starting_position = getcurpos()
 
   execute 'normal {j^'
-  let l:start = getcurpos()[1:2]
+  let l:start = getcurpos()
 
   execute 'normal }k$'
-  let l:end = getcurpos()[1:2]
+  let l:end = getcurpos()
 
   call s:BangBangWriteOut(l:start, l:end)
+  call cursor(l:starting_position[1], l:starting_position[2])
 endfunction
 
+function! BangBangWord()
+  let l:starting_position = getcurpos()
+
+  execute 'normal B'
+  let l:start = getcurpos()
+
+  call cursor(l:starting_position[1], l:starting_position[2])
+  execute 'normal E'
+  let l:end = getcurpos()
+
+  call s:BangBangWriteOut(l:start, l:end)
+
+  call cursor(l:starting_position[1], l:starting_position[2])
+endfunction
 
 function! BangBangInside()
   let l:starting_position = getcurpos()
@@ -79,12 +88,8 @@ function! BangBangDelete()
   execute 'normal ll'
 endfunction
 
-map  !!    :call BangBangRange()<CR>
+map  !!    :call BangBangWord()<CR>
 map  !ap   :call BangBangParagraph()<CR>
 map  !d    :call BangBangDelete()<CR>
 map  !n    :call BangBangNext()<CR>
 map  !p    :call BangBangPrevious()<CR>
-
-
-" one two three four. two three four. a b c d e f. and this is a
-" sentence that wraps lines.
